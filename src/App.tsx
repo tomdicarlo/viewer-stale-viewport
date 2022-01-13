@@ -10,6 +10,7 @@ import type { ScreenViewport } from "@itwin/core-frontend";
 import { FitViewTool, IModelApp, StandardViewId } from "@itwin/core-frontend";
 import { useAccessToken, Viewer } from "@itwin/web-viewer-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { ViewportWidgetProvider } from "./ViewportAccessWidget";
 
 import { Header } from "./Header";
 import { history } from "./history";
@@ -18,6 +19,14 @@ const App: React.FC = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [iModelId, setIModelId] = useState(process.env.IMJS_IMODEL_ID);
   const [iTwinId, setITwinId] = useState(process.env.IMJS_ITWIN_ID);
+
+  const updateModelInfo = (iModelId: string, iTwinId: string) => {
+    console.log(`About to pass iModelId of ${iModelId} into the Viewer Component`)
+    setIModelId(iModelId)
+    setITwinId(iTwinId)
+  }
+
+  const uiProviders = useMemo(()=>[new ViewportWidgetProvider(updateModelInfo)], []);
 
   const accessToken = useAccessToken();
 
@@ -131,6 +140,7 @@ const App: React.FC = () => {
           iModelId={iModelId}
           authConfig={authClient}
           viewCreatorOptions={viewCreatorOptions}
+          uiProviders={uiProviders}
         />
       )}
     </div>
